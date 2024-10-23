@@ -11,8 +11,8 @@ namespace DoAn_LapTrinhWeb.Common
            Để dùng gmail gửi email rs cho người khác bạn cần phải vô đây "https://www.google.com/settings/security/lesssecureapps" Cho phép ứng dụng kém an toàn: Bật
          */
         public const string emailID = "ascf5649@gmail.com";
-        public const string emailPassword = "gokv crwi immt bza";
-        public const string emailHost = ""; //nếu dùng gmail thì đổi thành  "Host = "smtp.gmail.com"
+        public const string emailPassword = "qyed tqed tlbe frad";
+        public const string emailHost = "smtp.gmail.com"; //nếu dùng gmail thì đổi thành  "Host = "smtp.gmail.com"
         public const string emailName = "KAOMESHOP";//Tên email hiển thị khi gửi
     }
     

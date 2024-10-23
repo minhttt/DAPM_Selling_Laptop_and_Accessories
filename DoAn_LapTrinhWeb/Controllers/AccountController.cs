@@ -114,7 +114,7 @@ namespace DoAn_LapTrinhWeb.Controllers
             var checkemail = db.Accounts.Any(m => m.Email == model.Email);
             if (checkemail)
             {
-                fail = "email đã được sử dụng";
+                Notification.setNotification1_5s("Email đã được sử dụng", "error");
                 return View();
             }
             account.Role = Const.ROLE_MEMBER_CODE; //admin quyền là 0: thành viên quyền là 1             
@@ -263,13 +263,17 @@ namespace DoAn_LapTrinhWeb.Controllers
             {
                 account.account_id = userId;
                 account.Name = userName;
-                account.Phone = phoneNumber;
+                if (account.Phone.Length == 10)
+                {
+                    account.Phone = phoneNumber;
+                } else Notification.setNotification1_5s("Số điện thoại phải là 10 số", "error");
                 account.update_by = userId.ToString();
                 account.update_at = DateTime.Now;
                 db.Configuration.ValidateOnSaveEnabled = false;
                 db.SaveChanges();
                 result = true;
-                return Json(result, JsonRequestBehavior.AllowGet);
+                return Json(result, JsonRequestBehavior.AllowGet); 
+                Notification.setNotification1_5s("Đổi thông tin thành công", "success");
             }
             else
             {
