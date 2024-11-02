@@ -19,6 +19,9 @@ namespace DoAn_LapTrinhWeb.Models
         [Required(ErrorMessage = "Nhập mật khẩu")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
+
+        [Required(ErrorMessage = "Please enter the CAPTCHA text.")]
+        public string Captcha { get; set; }
     }
 
     public class RegisterViewModels

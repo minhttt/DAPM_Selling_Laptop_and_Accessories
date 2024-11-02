@@ -123,6 +123,7 @@ namespace DoAn_LapTrinhWeb.Controllers
             ViewBag.PriceAscSort = sortOrder == "price_asc" ? "price_asc" : "price_asc";
             ViewBag.NameAscSort = sortOrder == "name_asc" ? "name_asc" : "name_asc";
             ViewBag.NameDescSort = sortOrder == "name_desc" ? "name_desc" : "name_desc";
+            ViewBag.PriceAmountSort = sortOrder == "price_amount" ? "price_amount" : "price_amount";
             var list = db.Products.OrderByDescending(m => m.product_id);
             switch (sortOrder)
             {
@@ -144,6 +145,7 @@ namespace DoAn_LapTrinhWeb.Controllers
                 case "name_desc":
                     list = (IOrderedQueryable<Product>)db.Products.OrderByDescending(m => m.product_name).Where(m => m.status == "1" && m.product_name.Contains(s));
                     break;
+
                 default:
                     list = (IOrderedQueryable<Product>)db.Products.OrderByDescending(m => m.create_at);
                     break;

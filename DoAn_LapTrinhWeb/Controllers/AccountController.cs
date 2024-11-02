@@ -52,6 +52,12 @@ namespace DoAn_LapTrinhWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Login(LoginViewModels model,string returnUrl)
         {
+            if (!this.IsCaptchaValid(model.Captcha)) 
+            {
+                Notification.setNotification3s("Captcha không hợp lệ", "error");
+                ViewBag.ErrMessage = "Error: captcha is not valid.";
+                return View(model); 
+            }
             model.Password = Crypto.Hash(model.Password);
             Account account = db.Accounts.FirstOrDefault(m => m.Email == model.Email && m.password == model.Password && m.status == "1");
             if (account != null)
@@ -524,7 +530,7 @@ namespace DoAn_LapTrinhWeb.Controllers
             // Được gọi khi nhấn [Thanh toán]
             return Json(User.Identity.IsAuthenticated, JsonRequestBehavior.AllowGet);
         }
-        //gg signin
+        //Google signin
         public static async Task<GGAuth> GetProfileResponseAsync(string accessToken)
         {
             using (var httpClient = new HttpClient())
