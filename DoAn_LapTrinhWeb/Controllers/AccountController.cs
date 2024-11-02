@@ -160,6 +160,7 @@ namespace DoAn_LapTrinhWeb.Controllers
                 account.Requestcode = resetCode; //request code phải giống reset code         
                 db.Configuration.ValidateOnSaveEnabled = false; // tắt validdation
                 db.SaveChanges();
+                db.Configuration.ValidateOnSaveEnabled = true;
                 Notification.setNotification5s("Đường dẫn reset password đã được gửi, vui lòng kiểm tra email", "success");
             }
             else
@@ -174,8 +175,10 @@ namespace DoAn_LapTrinhWeb.Controllers
             var user = db.Accounts.Where(a => a.Requestcode == id).FirstOrDefault();
             if (user != null && !User.Identity.IsAuthenticated)
             {
+
                 ResetPasswordViewModels model = new ResetPasswordViewModels();
                 model.ResetCode = id;
+                Console.WriteLine(model.ResetCode);
                 return View(model);
             }
             else
@@ -192,13 +195,13 @@ namespace DoAn_LapTrinhWeb.Controllers
             if (user != null)
             {
                 user.password = Crypto.Hash(model.NewPassword);
-                //sau khi đổi mật khẩu thành công khi quay lại link cũ thì sẽ không đôi được mật khẩu nữa 
                 user.Requestcode = "";
                 user.update_by = user.Email;
                 user.update_at = DateTime.Now;
                 user.status = "1";
                 db.Configuration.ValidateOnSaveEnabled = false;
                 db.SaveChanges();
+                db.Configuration.ValidateOnSaveEnabled = true;
                 Notification.setNotification1_5s("Cập nhật mật khẩu thành công", "success");
                 return RedirectToAction("Login");
             }
