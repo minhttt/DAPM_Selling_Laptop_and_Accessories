@@ -5,6 +5,7 @@ using DoAn_LapTrinhWeb.Models;
 using PagedList;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Web;
@@ -205,6 +206,20 @@ namespace DoAn_LapTrinhWeb.Controllers
             }
             ViewBag.Showing = list.Count();
             return list;
+        }
+
+
+
+        //Filter by price
+        public ActionResult FilterProducts(double minPrice, double maxPrice)
+        {
+            var filteredProducts = db.Products.Where(p =>
+                p.price >= minPrice &&
+                p.price <= maxPrice
+            ).OrderByDescending(p => p.product_id).ToList();
+            ViewBag.AvgFeedback = db.Feedbacks.ToList(); // Thêm AvgFeedback nếu có
+            ViewBag.OrderDetail = db.Oder_Detail.ToList(); // Thêm OrderDetail nếu có
+            return PartialView("FilterByPriceSlide", filteredProducts);
         }
     }
 }
