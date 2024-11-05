@@ -1,4 +1,4 @@
-(function($) {
+﻿(function($) {
     "use strict";
 
     /*****************************
@@ -429,14 +429,60 @@
     $("#slider-range").slider({
         range: true,
         min: 0,
-        max: 500,
-        values: [75, 300],
-        slide: function(event, ui) {
-            $("#amount").val("$" + ui.values[0] + " - $" + ui.values[1]);
+        max: 50000000,
+        step: 500000,
+        values: [750000, 30000000],
+        slide: function (event, ui) {
+            $("#amount").val(
+                ui.values[0].toLocaleString('vi-VN') + "₫ - " +
+                ui.values[1].toLocaleString('vi-VN') + "₫"
+            );
+            $("#min-price").val(ui.values[0]);
+            $("#max-price").val(ui.values[1]);
+            filterProducts(ui.values[0], ui.values[1]);
         }
     });
-    $("#amount").val("$" + $("#slider-range").slider("values", 0) +
-        " - $" + $("#slider-range").slider("values", 1));
+    function filterProducts(minPrice, maxPrice) {
+        $.ajax({
+            url: '@Url.Action("FilterProducts", "Products")',
+            type: 'GET',
+            data: {
+                minPrice: minPrice,
+                maxPrice: maxPrice
+            },
+            success: function (result) {
+                // Cập nhật phần hiển thị sản phẩm
+                $('#product-filter').removeClass('loading');
+                $('#product-filter').html(result);
+                // Khởi tạo lại AOS animation nếu cần
+                AOS.refresh();
+            },
+            error: function (err) {
+                console.log('Error:', err);
+                $('#product-filter').removeClass('loading');
+            }
+        });
+    }
+
+    // Xử lý input thủ công
+    $("#min-price, #max-price").on('change', function () {
+        var minPrice = parseInt($("#min-price").val().replace(/[^0-9]/g, '')) || 0;
+        var maxPrice = parseInt($("#max-price").val().replace(/[^0-9]/g, '')) || 50000000;
+
+        // Cập nhật slider
+        $("#slider-range").slider("values", 0, minPrice);
+        $("#slider-range").slider("values", 1, maxPrice);
+
+        // Cập nhật hiển thị
+        $("#amount").val(
+            minPrice.toLocaleString('vi-VN') + "₫ - " +
+            maxPrice.toLocaleString('vi-VN') + "₫"
+        );
+
+        // Filter sản phẩm
+        filterProducts(minPrice, maxPrice);
+    });
+
 
 
 
