@@ -376,13 +376,5 @@ function filterProducts(minPrice, maxPrice) {
         });
 
     </script>
-    <script>
-    function updateFilterUrl(sortOrder) {
-    var brand = '@ViewBag.Brand';
-    var page = '@ViewBag.Page';
-    var url = '@Url.Action("FilterByBrand", "Products")' + '?page=' + page + '&brand=' + brand + '&sortOrder=' + sortOrder;
-    window.location.href = url;
-        }
-    </script>
 }
 
