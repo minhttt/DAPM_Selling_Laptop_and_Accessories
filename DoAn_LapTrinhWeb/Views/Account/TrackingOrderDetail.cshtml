@@ -53,14 +53,14 @@
                                 </thead> <!-- End Cart Table Head -->
                                 <tbody>
                                     <!-- Start Cart Single Item-->
-                                    @foreach (var item in Model)
+                                    @foreach (var item in Model) 
                                     {
                                         <tr class="item">
                                             <td class="product_name">
-                                                <a href="~/@SlugGenerator.SlugGenerator.GenerateSlug(item.Product.product_name)-@item.product_id">@item.Product.product_name</a>
+                                                <a href="@Url.Action("ProductDetail", "Products", new { slug = SlugGenerator.SlugGenerator.GenerateSlug(item.Product.product_name), id = item.product_id })">@item.Product.product_name</a>
                                             </td>
                                             <td class="product_thumb">
-                                                <a href="~/@SlugGenerator.SlugGenerator.GenerateSlug(item.Product.product_name)-@item.product_id">
+                                                <a href="@Url.Action("ProductDetail", "Products", new { slug = SlugGenerator.SlugGenerator.GenerateSlug(item.Product.product_name), id = item.product_id })">
                                                     <img src="@item.Product.image" alt="@item.product_id">
                                                 </a>
                                             </td>

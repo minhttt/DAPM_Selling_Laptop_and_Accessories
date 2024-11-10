@@ -3,22 +3,29 @@
 @model PagedList.IPagedList
 @{
     var query = "";
-}
-<ul class="pagination">
-    @for (var i = 0; i < Request.QueryString.Count; i++)
+    for (var i = 0; i < Request.QueryString.Count; i++)
     {
         if (Request.QueryString.AllKeys[i] != "page")
         {
+            if (!string.IsNullOrEmpty(query))
+            {
+                query += "&"; // Thêm dấu & giữa các tham số
+            }
             query += Request.QueryString.AllKeys[i] + "=" + Request.QueryString[i];
         }
     }
+}
+
+<ul class="pagination">
     @foreach (var item in GetPagination())
     {
         var url = Url.Action(item.Action, item.Controller, new { page = item.Page });
+
         if (!string.IsNullOrEmpty(query))
         {
-            url = Url.Action(item.Action, item.Controller, new { page = item.Page }) + "&" + query;
+            url += "&" + query;
         }
+
         <li>
             <a class="@(item.IsActive ? "active" : item.Page <= 0 ? "disabled" : "")" href="@url">@item.Display</a>
         </li>
@@ -31,7 +38,10 @@
         var totalPage = Model.PageCount;
         var curController = ViewContext.RouteData.Values["controller"].ToString();
         var curAction = ViewContext.RouteData.Values["action"].ToString();
-
+        var brand = ViewBag.Brand;
+        var sortOrder = ViewBag.SortBy;
+        var minPrice = ViewBag.PriceFrom;
+        var maxPrice = ViewBag.PriceTo;
         var pager = new List<Pagination>();
         if (totalPage == 0)
         {
@@ -55,7 +65,7 @@
                 Action = curAction,
                 IsActive = false,
                 Page = curPage + 1,
-                Display = (curPage + 1).ToString()
+                Display = (curPage + 1).ToString(),
             });
             if (curPage + 1 < totalPage)
             {
