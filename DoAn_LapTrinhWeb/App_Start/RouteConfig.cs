@@ -27,15 +27,8 @@ namespace DoAn_LapTrinhWeb
             //rút gọn link laptop
             routes.MapRoute(
               name: "Laptop",
-              url: "laptop",
+              url: "Laptop",
              defaults: new { Controller = "Products", action = "Laptop" }
-           );
-
-            //rút gọn link phụ kiện
-            routes.MapRoute(
-              name: "phu kien",
-              url: "accessory",
-             defaults: new { Controller = "Products", action = "Accessories" }
            );
 
             //rút gọn link giỏ hàng

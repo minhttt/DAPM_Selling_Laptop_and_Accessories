@@ -65,12 +65,12 @@
                                                 <a class="js-delete" style="cursor:pointer;" data-id="@item.product_id"><i class="fa fa-trash-o"></i></a>
                                             </td>
                                             <td class="product_thumb">
-                                                <a target="_blank" href="~/@SlugGenerator.SlugGenerator.GenerateSlug(item.product_name)-@item.product_id">
+                                                <a target="_blank" href="@Url.Action("ProductDetail", "Products", new { slug = SlugGenerator.SlugGenerator.GenerateSlug(item.product_name), id = item.product_id })">
                                                     <img src="@item.image" alt="">
                                                 </a>
                                             </td>
                                             <td class="product_name">
-                                                <a target="_blank" href="~/@SlugGenerator.SlugGenerator.GenerateSlug(item.product_name)-@item.product_id">
+                                                <a target="_blank"  href="@Url.Action("ProductDetail", "Products", new { slug = SlugGenerator.SlugGenerator.GenerateSlug(item.product_name), id = item.product_id })">
                                                     @item.product_name
                                                 </a>
                                             </td>

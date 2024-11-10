@@ -7,141 +7,141 @@
 }
 
 
-    @foreach (var item in Model)
-    {
-        <div class="col-xl-4 col-sm-6 col-12">
-            <!-- Start Product Default Single Item -->
-            <div class="product-default-single-item product-color--golden"
-                 data-aos="fade-up" data-aos-delay="0">
-                <div class="image-box">
-                    <a href="@SlugGenerator.SlugGenerator.GenerateSlug(item.product_name)-@item.product_id" class="image-link">
-                        <img src="@item.image" alt="@item.product_name">
-                    </a>
-                    @if (item.Discount.discount_star < DateTime.Now && item.Discount.discount_end > DateTime.Now && item.Discount.discount_price != 0)
-                    {
-                        <div class="tag">
-                            <span>-@((((item.price) / (item.price)) - ((item.price - item.Discount.discount_price) / (item.price))).ToString("0%"))</span>
-                        </div>
-                    }
-                    <div class="action-link">
-                        <div class="action-link-left">
-                            <input step="1" id="quantity" autocomplete="off" hidden value="1" type="number" />
-                            <a class="btnAddToCart" style="cursor:pointer;" data-id="@item.product_id">Thêm vào giỏ</a>
-                        </div>
+@foreach (var item in Model)
+{
+    <div class="col-xl-4 col-sm-6 col-12">
+        <!-- Start Product Default Single Item -->
+        <div class="product-default-single-item product-color--golden"
+             data-aos="fade-up" data-aos-delay="0">
+            <div class="image-box">
+                <a href="~/@SlugGenerator.SlugGenerator.GenerateSlug(item.product_name)-@item.product_id" class="image-link">
+                    <img src="@item.image" alt="@item.product_name">
+                </a>
+                @if (item.Discount.discount_star < DateTime.Now && item.Discount.discount_end > DateTime.Now && item.Discount.discount_price != 0)
+                {
+                    <div class="tag">
+                        <span>-@((((item.price) / (item.price)) - ((item.price - item.Discount.discount_price) / (item.price))).ToString("0%"))</span>
+                    </div>
+                }
+                <div class="action-link">
+                    <div class="action-link-left">
+                        <input step="1" id="quantity" autocomplete="off" hidden value="1" type="number" />
+                        <a class="btnAddToCart" style="cursor:pointer;" data-id="@item.product_id">Thêm vào giỏ</a>
                     </div>
                 </div>
-                <div class="content">
-                    <div class="text-center">
-                        <h6 class="title">
-                            <a href="@SlugGenerator.SlugGenerator.GenerateSlug(item.product_name)-@item.product_id" style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">@item.product_name</a>
-                        </h6>
-                    </div>
-                </div>
+            </div>
+            <div class="content">
                 <div class="text-center">
-                    <!--review star-->
-                    <ul class="review-star">
-                        <!-- Review Stars -->
-                        @{
-                            double onestar = 1; int c_onestar = 0; double truestar = 2; int c_truestar = 0;
-                            double threestar = 3; int c_threestar = 0; ; double fourstar = 4; int c_fourstar = 0;
-                            double fivestar = 5; int c_fivestar = 0; int totalrating = 0; double avg = 0;
-                            string avgStar = "";
-                            foreach (var avgfb in AvgFeedback)
+                    <h6 class="title">
+                        <a href="~/@SlugGenerator.SlugGenerator.GenerateSlug(item.product_name)-@item.product_id" style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">@item.product_name</a>
+                    </h6>
+                </div>
+            </div>
+            <div class="text-center">
+                <!--review star-->
+                <ul class="review-star">
+                    <!-- Review Stars -->
+                    @{
+                        double onestar = 1; int c_onestar = 0; double truestar = 2; int c_truestar = 0;
+                        double threestar = 3; int c_threestar = 0; ; double fourstar = 4; int c_fourstar = 0;
+                        double fivestar = 5; int c_fivestar = 0; int totalrating = 0; double avg = 0;
+                        string avgStar = "";
+                        foreach (var avgfb in AvgFeedback)
+                        {
+                            foreach (var feedbackOrder in listOrderDetail)
                             {
-                                foreach (var feedbackOrder in listOrderDetail)
+                                if (avgfb.product_id == item.product_id && avgfb.stastus == "2" && feedbackOrder.Order.status == "3" && feedbackOrder.product_id == item.product_id)
                                 {
-                                    if (avgfb.product_id == item.product_id && avgfb.stastus == "2" && feedbackOrder.Order.status == "3" && feedbackOrder.product_id == item.product_id)
+                                    totalrating++;
+                                    if (avgfb.rate_star == 1)
                                     {
-                                        totalrating++;
-                                        if (avgfb.rate_star == 1)
-                                        {
-                                            c_onestar++;
-                                        }
-                                        if (avgfb.rate_star == 2)
-                                        {
-                                            c_truestar++;
-                                        }
-                                        if (avgfb.rate_star == 3)
-                                        {
-                                            c_threestar++;
-                                        }
-                                        if (avgfb.rate_star == 4)
-                                        {
-                                            c_fourstar++;
-                                        }
-                                        if (avgfb.rate_star == 5)
-                                        {
-                                            c_fivestar++;
-                                        }
+                                        c_onestar++;
+                                    }
+                                    if (avgfb.rate_star == 2)
+                                    {
+                                        c_truestar++;
+                                    }
+                                    if (avgfb.rate_star == 3)
+                                    {
+                                        c_threestar++;
+                                    }
+                                    if (avgfb.rate_star == 4)
+                                    {
+                                        c_fourstar++;
+                                    }
+                                    if (avgfb.rate_star == 5)
+                                    {
+                                        c_fivestar++;
                                     }
                                 }
                             }
-                            avg = (onestar * c_onestar / totalrating) + (truestar * c_truestar / totalrating) + (threestar * c_threestar / totalrating) +
-                            (fourstar * c_fourstar / totalrating) + (fivestar * c_fivestar / totalrating);
-                            if (avg >= 1 && avg < 2)
-                            {
-                                avgStar = "<li class='fill'><i class='ion-android-star'></i></li>" +
-                                       "<li class='empty'><i class='ion-android-star'></i></li>" +
-                                       "<li class='empty'><i class='ion-android-star'></i></li>" +
-                                       "<li class='empty'><i class='ion-android-star'></i></li>" +
-                                       "<li class='empty'><i class='ion-android-star'></i></li>";
-                            }
-                            else if ((avg >= 2) && (avg < 3))
-                            {
-                                avgStar = "<li class='fill'><i class='ion-android-star'></i></li>" +
-                                       "<li class='fill'><i class='ion-android-star'></i></li>" +
-                                       "<li class='empty'><i class='ion-android-star'></i></li>" +
-                                       "<li class='empty'><i class='ion-android-star'></i></li>" +
-                                       "<li class='empty'><i class='ion-android-star'></i></li>";
-                            }
-                            else if ((avg >= 3) && (avg < 4))
-                            {
-                                avgStar = "<li class='fill'><i class='ion-android-star'></i></li>" +
-                                       "<li class='fill'><i class='ion-android-star'></i></li>" +
-                                       "<li class='fill'><i class='ion-android-star'></i></li>" +
-                                       "<li class='empty'><i class='ion-android-star'></i></li>" +
-                                       "<li class='empty'><i class='ion-android-star'></i></li>";
-                            }
-                            else if ((avg >= 4) && (avg < 5))
-                            {
-                                avgStar = "<li class='fill'><i class='ion-android-star'></i></li>" +
-                                       "<li class='fill'><i class='ion-android-star'></i></li>" +
-                                       "<li class='fill'><i class='ion-android-star'></i></li>" +
-                                       "<li class='fill'><i class='ion-android-star'></i></li>" +
-                                       "<li class='empty'><i class='ion-android-star'></i></li>";
-                            }
-                            else if (avg == 5)
-                            {
-                                avgStar = "<li class='fill'><i class='ion-android-star'></i></li>" +
-                                       "<li class='fill'><i class='ion-android-star'></i></li>" +
-                                       "<li class='fill'><i class='ion-android-star'></i></li>" +
-                                       "<li class='fill'><i class='ion-android-star'></i></li>" +
-                                       "<li class='fill'><i class='ion-android-star'></i></li>";
-                            }
-                            else
-                            {
-                                avgStar = "<li class='empty'><i class='ion-android-star'></i></li>" +
-                                       "<li class='empty'><i class='ion-android-star'></i></li>" +
-                                       "<li class='empty'><i class='ion-android-star'></i></li>" +
-                                       "<li class='empty'><i class='ion-android-star'></i></li>" +
-                                       "<li class='empty'><i class='ion-android-star'></i></li>";
-                            }
                         }
-                        @Html.Raw(avgStar)
-                    </ul>
-                </div>
-                <div class="text-center">
-                    @if (item.Discount.discount_star < DateTime.Now && item.Discount.discount_end > DateTime.Now && item.Discount.discount_price != 0)
-                    {
-                        <span class="price"><del style="font-size:15px; margin-right:7px;">@item.price.ToString("#,0₫", culture.NumberFormat)</del><span style="color: #000; font-size: 17px; font-weight: 600;">@((item.price - item.Discount.discount_price).ToString("#,0₫", culture.NumberFormat))</span></span>
+                        avg = (onestar * c_onestar / totalrating) + (truestar * c_truestar / totalrating) + (threestar * c_threestar / totalrating) +
+                        (fourstar * c_fourstar / totalrating) + (fivestar * c_fivestar / totalrating);
+                        if (avg >= 1 && avg < 2)
+                        {
+                            avgStar = "<li class='fill'><i class='ion-android-star'></i></li>" +
+                                   "<li class='empty'><i class='ion-android-star'></i></li>" +
+                                   "<li class='empty'><i class='ion-android-star'></i></li>" +
+                                   "<li class='empty'><i class='ion-android-star'></i></li>" +
+                                   "<li class='empty'><i class='ion-android-star'></i></li>";
+                        }
+                        else if ((avg >= 2) && (avg < 3))
+                        {
+                            avgStar = "<li class='fill'><i class='ion-android-star'></i></li>" +
+                                   "<li class='fill'><i class='ion-android-star'></i></li>" +
+                                   "<li class='empty'><i class='ion-android-star'></i></li>" +
+                                   "<li class='empty'><i class='ion-android-star'></i></li>" +
+                                   "<li class='empty'><i class='ion-android-star'></i></li>";
+                        }
+                        else if ((avg >= 3) && (avg < 4))
+                        {
+                            avgStar = "<li class='fill'><i class='ion-android-star'></i></li>" +
+                                   "<li class='fill'><i class='ion-android-star'></i></li>" +
+                                   "<li class='fill'><i class='ion-android-star'></i></li>" +
+                                   "<li class='empty'><i class='ion-android-star'></i></li>" +
+                                   "<li class='empty'><i class='ion-android-star'></i></li>";
+                        }
+                        else if ((avg >= 4) && (avg < 5))
+                        {
+                            avgStar = "<li class='fill'><i class='ion-android-star'></i></li>" +
+                                   "<li class='fill'><i class='ion-android-star'></i></li>" +
+                                   "<li class='fill'><i class='ion-android-star'></i></li>" +
+                                   "<li class='fill'><i class='ion-android-star'></i></li>" +
+                                   "<li class='empty'><i class='ion-android-star'></i></li>";
+                        }
+                        else if (avg == 5)
+                        {
+                            avgStar = "<li class='fill'><i class='ion-android-star'></i></li>" +
+                                   "<li class='fill'><i class='ion-android-star'></i></li>" +
+                                   "<li class='fill'><i class='ion-android-star'></i></li>" +
+                                   "<li class='fill'><i class='ion-android-star'></i></li>" +
+                                   "<li class='fill'><i class='ion-android-star'></i></li>";
+                        }
+                        else
+                        {
+                            avgStar = "<li class='empty'><i class='ion-android-star'></i></li>" +
+                                   "<li class='empty'><i class='ion-android-star'></i></li>" +
+                                   "<li class='empty'><i class='ion-android-star'></i></li>" +
+                                   "<li class='empty'><i class='ion-android-star'></i></li>" +
+                                   "<li class='empty'><i class='ion-android-star'></i></li>";
+                        }
                     }
-                    else
-                    {
-                        <span class="price" style="font-size: 17px; color: #000; font-weight: 600;">@item.price.ToString("#,0₫", culture.NumberFormat)</span>
-                    }
-                </div>
+                    @Html.Raw(avgStar)
+                </ul>
             </div>
-            <!-- End Product Default Single Item -->
+            <div class="text-center">
+                @if (item.Discount.discount_star < DateTime.Now && item.Discount.discount_end > DateTime.Now && item.Discount.discount_price != 0)
+                {
+                    <span class="price"><del style="font-size:15px; margin-right:7px;">@item.price.ToString("#,0₫", culture.NumberFormat)</del><span style="color: #000; font-size: 17px; font-weight: 600;">@((item.price - item.Discount.discount_price).ToString("#,0₫", culture.NumberFormat))</span></span>
+                }
+                else
+                {
+                    <span class="price" style="font-size: 17px; color: #000; font-weight: 600;">@item.price.ToString("#,0₫", culture.NumberFormat)</span>
+                }
+            </div>
         </div>
-                                
-      }
+        <!-- End Product Default Single Item -->
+    </div>
+
+}

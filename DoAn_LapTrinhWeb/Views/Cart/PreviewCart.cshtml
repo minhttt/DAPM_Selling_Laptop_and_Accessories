@@ -33,12 +33,12 @@
                 }
                 <li class="offcanvas-cart-item-single">
                     <div class="offcanvas-cart-item-block">
-                        <a href="~/@SlugGenerator.SlugGenerator.GenerateSlug(item.product_name)-@item.product_id" class="mr-3">
+                        <a  href="@Url.Action("ProductDetail", "Products", new { slug = SlugGenerator.SlugGenerator.GenerateSlug(item.product_name), id = item.product_id })" class="mr-3">
                             <img src="@item.image" alt="@item.product_name" class="offcanvas-cart-image" style=" width: 41px !important;" />
                         </a>
                         <div class="offcanvas-cart-item-content">
                             <a href="#" class="offcanvas-cart-item-link" style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">@item.product_name</a>
-                            <div class="~/@SlugGenerator.SlugGenerator.GenerateSlug(item.product_name)-@item.product_id">
+                            <div class="@Url.Action("ProductDetail", "Products", new { slug = SlugGenerator.SlugGenerator.GenerateSlug(item.product_name), id = item.product_id })">
                                 <span class="offcanvas-cart-item-details-quantity update-quan">@quan x </span>
                                 <span class="offcanvas-cart-item-details-price">@item.price.ToString("#,0₫", culture.NumberFormat)</span>
                             </div>

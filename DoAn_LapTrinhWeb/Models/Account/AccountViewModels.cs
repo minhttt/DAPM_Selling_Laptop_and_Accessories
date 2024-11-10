@@ -20,7 +20,7 @@ namespace DoAn_LapTrinhWeb.Models
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
-        [Required(ErrorMessage = "Please enter the CAPTCHA text.")]
+        [Required(ErrorMessage = "Vui lòng nhập mã captcha.")]
         public string Captcha { get; set; }
     }
 

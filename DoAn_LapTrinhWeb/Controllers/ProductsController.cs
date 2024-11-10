@@ -2,10 +2,15 @@
 using DoAn_LapTrinhWeb.Common.Helpers;
 using DoAn_LapTrinhWeb.Model;
 using DoAn_LapTrinhWeb.Models;
+using LinqKit;
+using LinqKit.Core;
 using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.SqlClient;
+using System.Drawing.Drawing2D;
+using System.Drawing.Printing;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Web;
@@ -17,20 +22,21 @@ namespace DoAn_LapTrinhWeb.Controllers
     {
         private DbContext db = new DbContext();
         //Lấy danh sách laptop
-        public ActionResult Laptop(int? page,string sortOrder)
+        public ActionResult Laptop(int? page, string sortOrder,string brand,int? genre)
         {
             ViewBag.Type = "Laptop";
-            ViewBag.SortBy = "laptop" + "?";
+            ViewBag.SortBy = "?";
             ViewBag.CountProduct = db.Products.Where(m => m.type == 1).Count();
-            return View("Product", GetProduct(m => m.status == "1" && m.type == ProductType.LAPTOP, page, sortOrder));
+
+            return View("Product", GetProduct(m => m.status == "1" && m.type == ProductType.LAPTOP, page, sortOrder, brand, genre));
         }
         //Lấy danh sách phụ kiện
-        public ActionResult Accessories(int? page, string sortOrder)
+        public ActionResult Accessories(int? page, string sortOrder,string brand,int? genre)
         {
             ViewBag.Type = "Phụ kiện";
-            ViewBag.SortBy = "accessory" + "?";
+            ViewBag.SortBy = "?";
             ViewBag.CountProduct = db.Products.Where(m => m.type ==2).Count();
-            return View("Product", GetProduct(m => m.status == "1" && m.type == ProductType.ACCESSORY, page, sortOrder));
+            return View("Product", GetProduct(m => m.status == "1" && m.type == ProductType.ACCESSORY, page, sortOrder, brand, genre));
         }
         //xem chi tiết sản phẩm
         public ActionResult ProductDetail(int id, int? page)
@@ -111,16 +117,16 @@ namespace DoAn_LapTrinhWeb.Controllers
             }
         }
         //Tìm kiếm sản phẩm
-        public ActionResult SearchResult(int? page, string sortOrder, string s)
+        public ActionResult SearchResult(int? page, string sortOrder, string s,string brand, int? genre)
         {
-            ViewBag.SortBy = "search?s="+s+"&";
+            ViewBag.SortBy = "search?s=" + s + "&";
             ViewBag.Type = "Kết quả tìm kiếm - " + s;
             ViewBag.CurrentSort = sortOrder;
             ViewBag.ResetSort = String.IsNullOrEmpty(sortOrder) ? "" : "";
             ViewBag.DateAscSort = sortOrder == "date_asc" ? "date_asc" : "date_asc";
             ViewBag.DateDescSort = sortOrder == "date_desc" ? "date_desc" : "date_desc";
             ViewBag.PopularSort = sortOrder == "popular" ? "popular" : "popular";
-            ViewBag.PriceDescSort= sortOrder == "price_desc" ? "price_desc" : "price_desc";
+            ViewBag.PriceDescSort = sortOrder == "price_desc" ? "price_desc" : "price_desc";
             ViewBag.PriceAscSort = sortOrder == "price_asc" ? "price_asc" : "price_asc";
             ViewBag.NameAscSort = sortOrder == "name_asc" ? "name_asc" : "name_asc";
             ViewBag.NameDescSort = sortOrder == "name_desc" ? "name_desc" : "name_desc";
@@ -151,9 +157,9 @@ namespace DoAn_LapTrinhWeb.Controllers
                     list = (IOrderedQueryable<Product>)db.Products.OrderByDescending(m => m.create_at);
                     break;
             }
-            ViewBag.Countproduct = db.Products.Where(m => m.status == "1" && m.product_name.Contains(s)).Count();          
-            return View("Product", GetProduct(m => m.status == "1" && (m.product_name.Contains(s) || m.product_id.ToString().Contains(s)), page, sortOrder));
-        }   
+            ViewBag.Countproduct = db.Products.Where(m => m.status == "1" && m.product_name.Contains(s)).Count();
+            return View("Product", GetProduct(m => m.status == "1" && (m.product_name.Contains(s) || m.product_id.ToString().Contains(s)), page, sortOrder,brand,genre));
+        }
 
 
         public ActionResult FilterProduct (int Id)
@@ -164,13 +170,25 @@ namespace DoAn_LapTrinhWeb.Controllers
 
 
         //Get product 
-        private IPagedList GetProduct(Expression<Func<Product, bool>> expr, int? page, string sortOrder)
+        private IPagedList GetProduct(Expression<Func<Product, bool>> expr, int? page, string sortOrder,string brand, int? genre)
         {
             int pageSize = 9; //1 trang hiện thỉ tối đa 9 sản phẩm
             int pageNumber = (page ?? 1); //đánh số trang
             ViewBag.AvgFeedback = db.Feedbacks.ToList();
             ViewBag.OrderDetail = db.Oder_Detail.ToList();
+            ViewBag.Type = "Sản phẩm";
             ViewBag.CurrentSort = sortOrder;
+            if (genre.HasValue)
+            {
+                ViewBag.SortBy = "?"+"genre="+genre+"&";
+            }
+
+            // Thêm điều kiện cho brand
+            if (!string.IsNullOrEmpty(brand))
+            {
+                ViewBag.SortBy = "?" + "brand=" + brand + "&";
+            }
+            ViewBag.CountProduct = db.Products.Where(m => m.type == 1).Count();
             ViewBag.ResetSort = String.IsNullOrEmpty(sortOrder) ? "" : "";
             ViewBag.DateAscSort = sortOrder == "date_asc" ? "date_asc" : "date_asc";
             ViewBag.DateDescSort = sortOrder == "date_desc" ? "date_desc" : "date_desc";
@@ -182,13 +200,13 @@ namespace DoAn_LapTrinhWeb.Controllers
             var list = db.Products.Where(expr).OrderByDescending(m => m.product_id).ToPagedList(pageNumber, pageSize);
             switch (sortOrder)
             {
-              case "price_asc":
+                case "price_asc":
                     list = db.Products.Where(expr).OrderBy(m => (m.price - m.Discount.discount_price)).ToPagedList(pageNumber, pageSize);
                     break;
                 case "price_desc":
                     list = db.Products.Where(expr).OrderByDescending(m => (m.price - m.Discount.discount_price)).ToPagedList(pageNumber, pageSize);
                     break;
-               case "date_asc":
+                case "date_asc":
                     list = db.Products.Where(expr).OrderBy(m => m.create_at).ToPagedList(pageNumber, pageSize);
                     break;
                 case "date_desc":
@@ -211,15 +229,48 @@ namespace DoAn_LapTrinhWeb.Controllers
 
 
         //Filter by price
-        public ActionResult FilterProducts(double minPrice, double maxPrice)
+        public ActionResult FilterProducts(double minPrice, double maxPrice, int? page)
         {
+            int pageSize = 9; // số lượng sản phẩm trên một trang
+            int pageNumber = (page ?? 1); // nếu page = null, mặc định lấy trang 1
             var filteredProducts = db.Products.Where(p =>
                 p.price >= minPrice &&
                 p.price <= maxPrice
             ).OrderByDescending(p => p.product_id).ToList();
-            ViewBag.AvgFeedback = db.Feedbacks.ToList(); // Thêm AvgFeedback nếu có
-            ViewBag.OrderDetail = db.Oder_Detail.ToList(); // Thêm OrderDetail nếu có
+            ViewBag.MinPrice = minPrice;
+            ViewBag.MaxPrice = maxPrice;
+            var productsToShow = filteredProducts.ToPagedList(pageNumber, pageSize);
+            ViewBag.AvgFeedback = db.Feedbacks.ToList(); 
+            ViewBag.OrderDetail = db.Oder_Detail.ToList(); 
             return PartialView("FilterByPriceSlide", filteredProducts);
+        }
+
+
+
+        public ActionResult FilterByBrand(string brand, int? genre, string sortOrder, int? page,  double? minPrice = null, double? maxPrice = null)
+        {
+            int pageSize = 9; 
+            int pageNumber = (page ?? 1);
+            var expr = LinqKit.PredicateBuilder.New<Product>();
+            expr = expr.And(p => p.status == "1");
+            // Add the condition for genre if it is provided
+            if (genre.HasValue)
+            {
+                expr = expr.And(p => p.genre_id == genre);
+            }
+
+            // Thêm điều kiện cho brand
+            if (!string.IsNullOrEmpty(brand))
+            {
+                expr = expr.And(p => p.product_name.Contains(brand));
+            }
+            ViewBag.Page = page;    
+            ViewBag.Brand = brand;
+            ViewBag.PriceFrom = minPrice;
+            ViewBag.PriceTo = maxPrice;
+            ViewBag.AvgFeedback = db.Feedbacks.ToList();
+            ViewBag.OrderDetail = db.Oder_Detail.ToList();
+            return View("Product", GetProduct(expr,page,sortOrder,brand,genre));
         }
     }
 }
