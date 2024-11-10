@@ -16,6 +16,7 @@
     double total = 0;
     double total2 = 0;
 }
+
 <!--begin::toolbar-->
 <div class="toolbar" id="kt_toolbar">
     <!--begin::Container-->
@@ -466,36 +467,6 @@
                     </div>
                     <!--end::Header-->
                     <!--begin::Card body-->
-                    <div class="card-body d-flex flex-column justify-content-end">
-                        <!--begin::Title-->
-                        <span class="fs-6 fw-boldest text-gray-800 d-block mb-2">Online hôm nay</span>
-                        <!--end::Title-->
-                        <!--begin::Users group-->
-                        <div class="symbol-group symbol-hover">
-                            <div class="symbol symbol-35px symbol-circle" data-bs-toggle="tooltip" title="Alan Warden">
-                                <span class="symbol-label bg-warning text-inverse-warning fw-bolder">A</span>
-                            </div>
-                            <div class="symbol symbol-35px symbol-circle" data-bs-toggle="tooltip" title="Michael Eberon">
-                                <img alt="Pic" src="/Images/Admin/assets/media/avatars/300-11.jpg" />
-                            </div>
-                            <div class="symbol symbol-35px symbol-circle" data-bs-toggle="tooltip" title="Susan Redwood">
-                                <span class="symbol-label bg-primary text-inverse-primary fw-bolder">S</span>
-                            </div>
-                            <div class="symbol symbol-35px symbol-circle" data-bs-toggle="tooltip" title="Melody Macy">
-                                <img alt="Pic" src="/Images/Admin/assets/media/avatars/300-2.jpg" />
-                            </div>
-                            <div class="symbol symbol-35px symbol-circle" data-bs-toggle="tooltip" title="Perry Matthew">
-                                <span class="symbol-label bg-danger text-inverse-danger fw-bolder">P</span>
-                            </div>
-                            <div class="symbol symbol-35px symbol-circle" data-bs-toggle="tooltip" title="Barry Walter">
-                                <img alt="Pic" src="/Images/Admin/assets/media/avatars/300-12.jpg" />
-                            </div>
-                            <a href="#" class="symbol symbol-35px symbol-circle" data-bs-toggle="modal" data-bs-target="#kt_modal_view_users">
-                                <span class="symbol-label bg-gray-900 text-gray-300 fs-8 fw-bolder">+42</span>
-                            </a>
-                        </div>
-                        <!--end::Users group-->
-                    </div>
                     <!--end::Card body-->
                 </div>
                 <!--end::Card widget 7-->
@@ -505,7 +476,7 @@
         <!--begin::Row-->
         <div class="row gy-5 g-xl-10">
             <!--begin::Col-->
-           <!--------------------------------------------------------------------------------------------fix order list at the center----------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------fix order list at the center----------------------------------------------------------------------------------------------------------------------------------------------------------------------->
             <!--end::Col-->
             <!--begin::Col-->
             <div class="col-xl-8 mb-5 mb-xl-10">
@@ -604,6 +575,53 @@
             <!--end::Col-->
         </div>
         <!--end::Row-->
+        <div class="row g-5 g-xl-8">
+            <!--begin::Col-->
+            <div class="col-xl-6">
+                <!--begin::Charts Widget 1-->
+                <div class="card card-xl-stretch mb-xl-8">
+                    <!--begin::Header-->
+                    <div class="card-header border-0 pt-5">
+                        <h3 class="card-title align-items-start flex-column">
+                            <span class="card-label fw-bolder fs-3 mb-1">Số laptop đã bán được</span>
+                            <span class="text-muted fw-bold fs-7">Tháng @ViewBag.CurrentMonth Năm @ViewBag.CurrentYear</span>
+
+                        </h3>
+                    </div>
+                    <!--end::Header-->
+                    <!--begin::Body-->
+                    <div class="card-body">
+                        <canvas id="laptopChart"></canvas>
+                    </div>
+                    <!--end::Body-->
+                </div>
+                <!--end::Charts Widget 1-->
+            </div>
+            <!--end::Col-->
+            <!--begin::Col-->
+            <div class="col-xl-6">
+                <!--begin::Charts Widget 1-->
+                <div class="card card-xl-stretch mb-xl-8">
+                    <!--begin::Header-->
+                    <div class="card-header border-0 pt-5">
+                        <h3 class="card-title align-items-start flex-column">
+                            <span class="card-label fw-bolder fs-3 mb-1">Số phụ kiện đã bán được</span>
+                            <span class="text-muted fw-bold fs-7">Tháng @ViewBag.CurrentMonth Năm @ViewBag.CurrentYear</span>
+
+                        </h3>
+                    </div>
+                    <!--end::Header-->
+                    <!--begin::Body-->
+                    <div class="card-body">
+                        <canvas id="accessorypStats"></canvas>
+                    </div>
+                    <!--end::Body-->
+                </div>
+                <!--end::Charts Widget 1-->
+            </div>
+            <!--end::Col-->
+        </div>
+        <!--end::Row-->
     </div>
     <!--end::Container-->
 </div>
@@ -611,4 +629,96 @@
 @section scripts{
     <script src="~/Scripts/AdminJS/vis-timeline.bundle.js"></script>
     <script src="~/Scripts/AdminJS/widgets.bundle.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <script>
+    // Lấy dữ liệu laptop stats từ ViewBag và phân tích thành đối tượng JavaScript
+    var laptopStats = @Html.Raw(ViewBag.LaptopStatsJson);
+        console.log(laptopStats);
+        if (laptopStats && laptopStats.length > 0) {
+            var xValues = laptopStats.map(function (stat) { return stat.BrandName; });
+            var yValues = laptopStats.map(function (stat) { return stat.TotalSold; });
+            function getRandomColor() {
+                var letters = '0123456789ABCDEF';
+                var color = '#'; for (var i = 0; i < 6; i++) {
+                    color += letters[Math.floor(Math.random() * 16)];
+                } return color;
+            } // Tạo mảng màu ngẫu nhiên
+            var barColors = xValues.map(function () { return getRandomColor(); });
+            console.log(laptopStats);
+            new Chart("laptopChart", {
+                type: "pie",
+                data: {
+                    labels: xValues,
+                    datasets: [{
+                        backgroundColor: barColors,
+                        data: yValues
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    var label = tooltipItem.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += tooltipItem.raw + ' sản phẩm';
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        } else { console.error("No data available for laptopStats"); }
+         var accessorypStats = @Html.Raw(ViewBag.AccessoryStatsJson);
+        console.log(accessorypStats);
+        if (laptopStats && laptopStats.length > 0) {
+            var xValues = accessorypStats.map(function (stat) { return stat.BrandName; });
+            var yValues = accessorypStats.map(function (stat) { return stat.TotalSold; });
+            function getRandomColor() {
+                var letters = '0123456789ABCDEF';
+                var color = '#'; for (var i = 0; i < 6; i++) {
+                    color += letters[Math.floor(Math.random() * 16)];
+                } return color;
+            } // Tạo mảng màu ngẫu nhiên
+            var barColors = xValues.map(function () { return getRandomColor(); });
+            console.log(laptopStats);
+            new Chart("accessorypStats", {
+                type: "pie",
+                data: {
+                    labels: xValues,
+                    datasets: [{
+                        backgroundColor: barColors,
+                        data: yValues
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    var label = tooltipItem.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += tooltipItem.raw + ' sản phẩm';
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        } else { console.error("No data available for laptopStats"); }
+    </script>
 }
