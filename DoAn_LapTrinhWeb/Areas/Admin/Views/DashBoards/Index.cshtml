@@ -71,7 +71,7 @@
                                 <span class="fs-4 fw-bold text-gray-400 me-1 align-self-start">₫</span>
                                 <!--end::Currency-->
                                 <!--begin::Amount-->
-                                <span class="fs-2hx fw-bolder text-dark me-2 lh-1">@Order.Where(m => m.oder_date.Month == DateTime.Now.Month && m.oder_date.Year == DateTime.Now.Year).Sum(m => m.total).ToString("#,0", culture.NumberFormat)</span>
+                                <span class="fs-1 fw-bolder text-dark me-2 lh-1">@Order.Where(m => m.oder_date.Month == DateTime.Now.Month && m.oder_date.Year == DateTime.Now.Year).Sum(m => m.total).ToString("#,0", culture.NumberFormat)</span>
                                 <!--end::Amount-->
                                 <!--begin::Badge-->
                                 @if (totalPriceOrderLastMonth < totalPriceOrderThisMonth)

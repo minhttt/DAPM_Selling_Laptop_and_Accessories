@@ -23,6 +23,7 @@ using GoogleAuthentication.Services;
 using System.Net.Http.Headers;
 using System.Net.Http;
 using CaptchaMvc.HtmlHelpers;
+using System.Security.Principal;
 
 namespace DoAn_LapTrinhWeb.Controllers
 {
@@ -40,7 +41,7 @@ namespace DoAn_LapTrinhWeb.Controllers
             {
                 return RedirectToAction("Index", "Home");
             }
-            var clientId = "740132614033-mut7srvgfpsk57lhhhs6thpc2uo2ltl6.apps.googleusercontent.com";
+            var clientId = "740132614033-5su84fmh3pqgna4umh0gb01lt1rl889q.apps.googleusercontent.com";
             var url = "https://localhost:44336/Account/GoogleSignInCallback";
             var response = GoogleAuth.GetAuthUrl(clientId, url);
             ViewBag.response = response;
@@ -556,41 +557,108 @@ namespace DoAn_LapTrinhWeb.Controllers
         }
         public async Task<ActionResult> GoogleSignInCallback(string code)
         {
-            try
+                var clientId = "740132614033-5su84fmh3pqgna4umh0gb01lt1rl889q.apps.googleusercontent.com"; // Client ID 
+                var clientsecret = "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"; // Client secret 
+                var url = "https://localhost:44336/Account/GoogleSignInCallback"; // URL callback 
+                var token = await GoogleAuth.GetAuthAccessToken(code, clientId, clientsecret, url);
+                var uProfile = await GoogleAuth.GetProfileResponseAsync(token.AccessToken.ToString());
+                var ggU = JsonConvert.DeserializeObject<GGAuth>(uProfile);
+                var existingAccount = db.Accounts.FirstOrDefault(m => m.Email == ggU.Email && m.status == "1" && m.Phone!=null);
+            if (existingAccount != null)
             {
-            var clientId = "740132614033-mut7srvgfpsk57lhhhs6thpc2uo2ltl6.apps.googleusercontent.com"; // Client ID của bạn
-            var clientsecret = "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"; // Client secret của bạn
-            var url = "https://localhost:44336/Account/GoogleSignInCallback"; // URL callback của bạn
-            var token = await GoogleAuth.GetAuthAccessToken(code, clientId, clientsecret, url);
-            var uProfile = await GoogleAuth.GetProfileResponseAsync(token.AccessToken.ToString());
-            var ggU = JsonConvert.DeserializeObject<GGAuth>(uProfile);
-            // Kiểm tra xem người dùng đã tồn tại trong cơ sở dữ liệu chưa
-                // Nếu người dùng chưa tồn tại, tạo mới người dùng
+
+                LoggedUserData userData = new LoggedUserData
+                {
+                    UserId = existingAccount.account_id,
+                    Name = existingAccount.Name,
+                    Email = existingAccount.Email,
+                    RoleCode = existingAccount.Role,
+                    Avatar = existingAccount.Avatar
+                };
+                // Lưu người dùng mới vào cơ sở dữ liệu
+                Notification.setNotification1_5s("Đăng nhập thành công", "success");
+                FormsAuthentication.SetAuthCookie(JsonConvert.SerializeObject(userData), false);
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
                 var newUser = new Account
                 {
                     create_at = DateTime.Now,
                     update_at = DateTime.Now,
-                    Role = 1, 
+                    Role = 1,
                     Email = ggU.Email,
                     Name = ggU.Name,
                     Avatar = ggU.Picture,
+                    Phone = "",
                     status = "1" // Kích hoạt tài khoản
                 };
+                TempData["NewUser"] = newUser;
 
-                db.Accounts.Add(newUser);
-                await db.SaveChangesAsync(); // Lưu người dùng mới vào cơ sở dữ liệu
-                Notification.setNotification1_5s("Đăng nhập thành công", "success");
-                FormsAuthentication.SetAuthCookie(JsonConvert.SerializeObject(newUser), false);
+                //db.Accounts.Add(newUser);
+                //await db.SaveChangesAsync();
+
+                //LoggedUserData userData = new LoggedUserData
+                //{
+                //    UserId = existingAccount.account_id,
+                //    Name = existingAccount.Name,
+                //    Email = existingAccount.Email,
+                //    RoleCode = existingAccount.Role,
+                //    Avatar = existingAccount.Avatar
+                //};
+                // Lưu người dùng mới vào cơ sở dữ liệu
+                //Notification.setNotification1_5s("Đăng nhập thành công", "success");
+                //FormsAuthentication.SetAuthCookie(JsonConvert.SerializeObject(userData), false);
+                return RedirectToAction("PhoneNumber", "Account");
             }
-            catch (Exception ex)
-            {
-
-            }
-
-            // Chuyển hướng đến trang chính
-            return RedirectToAction("Index", "Home");
         }
 
 
+        public ActionResult PhoneNumber()
+        {
+            var newUser = TempData["NewUser"] as Account;
+            if (newUser == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            TempData.Keep("NewUser");
+            return View(newUser);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> SavePhoneNumber(string phone)
+        {
+            var newUser = TempData["NewUser"] as Account;
+            if (newUser == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            if (string.IsNullOrEmpty(phone))
+            {
+                ModelState.AddModelError("Phone", "Vui lòng nhập số điện thoại");
+                TempData.Keep("NewUser");
+                return View("PhoneNumber", newUser);
+            }
+
+                newUser.Phone = phone;
+                db.Accounts.Add(newUser);
+                await db.SaveChangesAsync();
+
+                LoggedUserData userData = new LoggedUserData
+                {
+                    UserId = newUser.account_id,
+                    Name = newUser.Name,
+                    Email = newUser.Email,
+                    RoleCode = newUser.Role,
+                    Avatar = newUser.Avatar
+                };
+
+                Notification.setNotification1_5s("Đăng nhập thành công", "success");
+                FormsAuthentication.SetAuthCookie(JsonConvert.SerializeObject(userData), false);
+                return RedirectToAction("Index", "Home");
+        }
     }
 }
