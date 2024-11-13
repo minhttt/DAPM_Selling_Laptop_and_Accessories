@@ -267,7 +267,7 @@
                     <div class="product-details-catagory mb-2">
                         <span class="title">Thương hiệu:</span>
                         <ul>
-                            <li><a href="#">@Model.Brand.brand_name</a></li>
+                            <li><a href="@Url.Action("SearchResult", "Products", new {s = @Model.Brand.brand_name})">@Model.Brand.brand_name</a></li>
                         </ul>
                     </div>
                     <!-- End  Product Details Catagories Area-->
@@ -275,7 +275,7 @@
                     <div class="product-details-catagory mb-2">
                         <span class="title">Danh Mục:</span>
                         <ul>
-                            <li><a href="#">@Model.Genre.genre_name</a></li>
+                            <li><a href="@Url.Action("SearchResult", "Products", new {s = @Model.Genre.genre_name})">@Model.Genre.genre_name</a></li>
                         </ul>
                     </div>
                     <!-- End  Product Details Catagories Area-->
