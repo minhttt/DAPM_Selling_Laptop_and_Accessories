@@ -11,7 +11,9 @@ using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
 using DoAn_LapTrinhWeb.Common;
+using System.Web.UI.WebControls;
 namespace DoAn_LapTrinhWeb.Controllers
+
 {
     public class CartController : Controller
     {
@@ -196,7 +198,10 @@ namespace DoAn_LapTrinhWeb.Controllers
                 orderDiscount = (priceSum + 30000 - order.total).ToString("#,0₫", culture.NumberFormat);
                 orderPrice = priceSum.ToString("#,0₫", culture.NumberFormat);
                 orderTotal = order.total.ToString("#,0₫", culture.NumberFormat);
-                //SendVerificationLinkEmail(emailID, orderID, orderItem, orderDiscount, orderPrice, orderTotal, contentWard, district, province); //nếu muốn gửi email đơn hàng thì bật lên
+                int id = order.order_id;
+                string email = User.Identity.GetEmail();
+                //SendEmail(email, id);
+                SendVerificationLinkEmail(emailID, orderID, orderItem, orderDiscount, orderPrice, orderTotal, contentWard, district, province); //nếu muốn gửi email đơn hàng thì bật lên
                 Notification.setNotification3s("Đặt hàng thành công", "success");
                 return RedirectToAction("TrackingOrder", "Account");
             }
@@ -207,15 +212,40 @@ namespace DoAn_LapTrinhWeb.Controllers
             }
         }
         //Gửi email đơn hàng
+        private void SendEmail(string email, int id)
+        {
+            try
+            {
+                    var mailMessage = new MailMessage
+                {
+                    From = new MailAddress("luonggiabao060904@gmail.com"), // Email gửi
+                    Subject = "Thông báo: Đơn hàng đã được đặt thành công",
+                    Body = $"Chào bạn,<br><br>Đơn hàng có ID {id} của bạn đã được đặt thành công.<br> Vui lòng thanh toán bằng phương thức chuyển khoản qua số tài khoản sau: <br> STK: 1031798735 <br>Ngân hàng: Vietcombank.<br><br>Trân trọng,<br>Kaome",
+                    IsBodyHtml = true
+                };
+                mailMessage.To.Add(email);
+                using (var smtpClient = new SmtpClient("smtp.gmail.com"))
+                {
+                    smtpClient.Port = 587;
+                    smtpClient.EnableSsl = true;
+                    smtpClient.Credentials = new NetworkCredential("luonggiabao060904@gmail.com", "cqpo mdjt sflr bpzg"); // Thay "your-app-password" bằng mật khẩu ứng dụng
+                    smtpClient.Send(mailMessage);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Gửi email thất bại: {ex.Message}");
+            }
+        }
         [NonAction]
         public void SendVerificationLinkEmail(string emailID, string orderID, string orderItem, string orderDiscount, string orderPrice, string orderTotal, string contentWard, string district, string province)
         {
-            var fromEmail = new MailAddress(EmailConfig.emailID, EmailConfig.emailName); // "username email-vd: vn123@gmail.com" ,"tên hiển thị mail khi gửi"
+            var fromEmail = new MailAddress("luonggiabao060904@gmail.com"); // "username email-vd: vn123@gmail.com" ,"tên hiển thị mail khi gửi"
 
             var toEmail = new MailAddress(emailID);
-            var fromEmailPassword = EmailConfig.emailPassword; //có thể thay bằng mật khẩu gmail của bạn
+            var fromEmailPassword = "cqpo mdjt sflr bpzg"; //có thể thay bằng mật khẩu gmail của bạn
             string body = System.IO.File.ReadAllText(HostingEnvironment.MapPath("~/EmailTemplate/") + "EmailOrders" + ".cshtml"); //dùng body mail html , file template nằm trong thư mục "EmailTemplate/Text.cshtml"
-            string subject = "Thông tin đơn hàng #" + orderID;
+            string subject = "Thông tin đơn hàng #" + orderID; 
             body = body.Replace("{{order_id}}", orderID);
             body = body.Replace("{{order_item}}", orderItem);
             body = body.Replace("{{order_discount}}", orderDiscount);
@@ -224,9 +254,9 @@ namespace DoAn_LapTrinhWeb.Controllers
             body = body.Replace("{{contet_ward}}", contentWard);
             body = body.Replace("{{district}}", district);
             body = body.Replace("{{province}}", province);
-            var smtp = new SmtpClient
+            var smtp = new  SmtpClient("smtp.gmail.com")
             {
-                Host = EmailConfig.emailHost, //tên mấy chủ nếu bạn dùng gmail thì đổi  "Host = "smtp.gmail.com"
+                //Host = EmailConfig.emailHost, //tên mấy chủ nếu bạn dùng gmail thì đổi  "Host = "smtp.gmail.com"
                 Port = 587,
                 EnableSsl = true, //bật ssl
                 DeliveryMethod = SmtpDeliveryMethod.Network,
