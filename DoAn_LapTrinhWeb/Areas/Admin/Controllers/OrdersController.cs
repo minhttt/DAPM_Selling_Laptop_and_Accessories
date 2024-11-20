@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Data.Entity;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Net;
+using System.Net.Mail;
 using System.Web.Mvc;
 using DoAn_LapTrinhWeb.Common.Helpers;
 using DoAn_LapTrinhWeb.DTOs;
@@ -79,8 +81,10 @@ namespace DoAn_LapTrinhWeb.Areas.Admin.Controllers
                     order.status = status;
                     order.update_at = DateTime.Now;
                     order.update_by = User.Identity.GetEmail();
+                    string email = order.Account.Email;
                     db.Entry(order).State = EntityState.Modified;
                     db.SaveChanges();
+                    SendEmail(email, id, status);
                     return Json(result, JsonRequestBehavior.AllowGet);
                 }
                 else
@@ -120,6 +124,41 @@ namespace DoAn_LapTrinhWeb.Areas.Admin.Controllers
             catch
             {
                 return Json(result, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        private void SendEmail(string email, int id, string status)
+        {
+            try
+            {
+                string content;
+                if (status == "2")
+                {
+                    content = $"Kính chào bạn,<br><br>Đơn hàng có ID {id} của bạn đã được cập nhật trạng thái mới: <strong>đang xử lý</strong><br><br>Trân trọng,<br>Đội ngũ quản lý.";
+                }
+                else
+                {
+                    content = "Đơn hàng của bạn đã được giao thành công. Cảm ơn quý khách đã tin tưởng Kaome!";
+                }
+                var mailMessage = new MailMessage
+                {
+                    From = new MailAddress("luonggiabao060904@gmail.com"), // Email gửi
+                    Subject = "Cập nhật trạng thái đơn hàng",
+                    Body = content,
+                    IsBodyHtml = true
+                };
+                mailMessage.To.Add(email);
+                using (var smtpClient = new SmtpClient("smtp.gmail.com"))
+                {
+                    smtpClient.Port = 587;
+                    smtpClient.EnableSsl = true;
+                    smtpClient.Credentials = new NetworkCredential("luonggiabao060904@gmail.com", "cqpo mdjt sflr bpzg"); // Thay "your-app-password" bằng mật khẩu ứng dụng
+                    smtpClient.Send(mailMessage);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Gửi email thất bại: {ex.Message}");
             }
         }
     }
