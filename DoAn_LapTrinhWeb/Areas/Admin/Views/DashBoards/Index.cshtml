@@ -247,163 +247,37 @@
                     <!--begin::Header-->
                     <div class="card-header align-items-center border-0">
                         <!--begin::Title-->
-                        <h3 class="fw-bolder text-gray-900 m-0">Sản phẩm bán ra gần đây</h3>
+                        <h3 class="fw-bolder text-gray-900 m-0">Doanh thu năm @ViewBag.CurrentYear</h3>
                         <!--end::Title-->
                     </div>
                     <!--end::Header-->
                     <!--begin::Body-->
                     <div class="card-body pt-2">
-                        <!--begin::Nav-->
-                        <ul class="nav nav-pills nav-pills-custom mb-3">
-                            <!--begin::Item-->
-                            <li class="nav-item mb-3 me-3 me-lg-6">
-                                <!--begin::Link-->
-                                <a class="nav-link d-flex justify-content-between flex-column flex-center overflow-hidden active w-80px h-85px py-4" data-bs-toggle="pill" href="#kt_stats_widget_2_tab_2">
-                                    <!--begin::Icon-->
-                                    <div class="nav-icon">
-                                        <img alt="" src="/Images/Admin/assets/media/svg/products-categories/gaming.svg" class="" />
+                        <div class="row g-5 g-xl-8">
+                            <!--begin::Col-->
+                            <div class="col-xl-12">
+                                <!--begin::Charts Widget 1-->
+                                <div class="card card-xl-stretch mb-xl-8">
+                                    <!--begin::Header-->
+                                    <!--end::Header-->
+                                    <!--begin::Body-->
+                                    <div class="card-body">
+                                        <!-- Chart canvas -->
+                                        <canvas id="ProductsLine" style="height: 300px; width: 100%;"></canvas>
+                                        <input type="hidden" id="chartData" value="@ViewBag.TotalMoneyLineJson" />
                                     </div>
-                                    <!--end::Icon-->
-                                    <!--begin::Subtitle-->
-                                    <span class="nav-text text-gray-700 fw-bolder fs-6 lh-1">Laptop</span>
-                                    <!--end::Subtitle-->
-                                    <!--begin::Bullet-->
-                                    <span class="bullet-custom position-absolute bottom-0 w-100 h-4px bg-primary"></span>
-                                    <!--end::Bullet-->
-                                </a>
-                                <!--end::Link-->
-                            </li>
-                            <!--end::Item-->
-                            <!--begin::Item-->
-                            <li class="nav-item mb-3 me-3 me-lg-6">
-                                <!--begin::Link-->
-                                <a class="nav-link d-flex justify-content-between flex-column flex-center overflow-hidden w-80px h-85px py-4" data-bs-toggle="pill" href="#kt_stats_widget_2_tab_3">
-                                    <!--begin::Icon-->
-                                    <div class="nav-icon">
-                                        <img alt="" src="/Images/Admin/assets/media/svg/products-categories/watch.svg" class="" />
-                                    </div>
-                                    <!--end::Icon-->
-                                    <!--begin::Subtitle-->
-                                    <span class="nav-text text-gray-600 fw-bolder fs-6 lh-1">P.kiện</span>
-                                    <!--end::Subtitle-->
-                                    <!--begin::Bullet-->
-                                    <span class="bullet-custom position-absolute bottom-0 w-100 h-4px bg-primary"></span>
-                                    <!--end::Bullet-->
-                                </a>
-                                <!--end::Link-->
-                            </li>
-                            <!--end::Item-->
-                        </ul>
-                        <!--end::Nav-->
-                        <!--begin::Tab Content-->
-                        <div class="tab-content">
-                            <!--begin::Tap pane-->
-                            <div class="tab-pane fade show active" id="kt_stats_widget_2_tab_2">
-                                <!--begin::Table container-->
-                                <div class="table-responsive">
-                                    <!--begin::Table-->
-                                    <table class="table table-row-dashed align-middle gs-0 gy-4 my-0">
-                                        <!--begin::Table head-->
-                                        <thead>
-                                            <tr class="fs-7 fw-bolder text-gray-500 border-bottom-0">
-                                                <th class="ps-0 w-50px">Item</th>
-                                                <th class="min-w-140px"></th>
-                                                <th class="text-end min-w-140px">SL</th>
-                                                <th class="pe-0 text-end min-w-120px">Đơn giá</th>
-                                                <th class="pe-0 text-end min-w-120px">Thành tiền</th>
-                                            </tr>
-                                        </thead>
-                                        <!--end::Table head-->
-                                        <!--begin::Table body-->
-                                        <tbody>
-                                            @foreach (var laptop in ListOrderDetail)
-                                            {
-                                                if (laptop.Product.type == 1)
-                                                {
-                                                    <tr>
-                                                        <td>
-                                                            <img src="@laptop.Product.image" class="w-50px ms-n1" alt="" />
-                                                        </td>
-                                                        <td class="ps-0">
-                                                            <a target="_blank" href="~/@SlugGenerator.SlugGenerator.GenerateSlug(laptop.Product.product_name)-@laptop.product_id" class="text-gray-800 fw-bolder text-hover-primary mb-1 fs-6 text-start pe-0" style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">@laptop.Product.product_name</a>
-                                                            <span class="text-gray-400 fw-bold fs-7 d-block text-start ps-0">Item: #@laptop.product_id</span>
-                                                        </td>
-                                                        <td>
-                                                            <span class="text-gray-800 fw-bolder d-block fs-6 ps-0 text-end">x<span>@laptop.quantity</span></span>
-                                                        </td>
-                                                        <td class="text-end pe-0">
-                                                            <span class="text-gray-800 fw-bolder d-block fs-6">@laptop.price.ToString("#,0₫", culture.NumberFormat)</span>
-                                                        </td>
-                                                        <td class="text-end pe-0">
-                                                            <span class="text-gray-800 fw-bolder d-block fs-6">@((laptop.price*laptop.quantity).ToString("#,0₫", culture.NumberFormat))</span>
-                                                        </td>
-                                                    </tr>
-                                                }
-                                            }
-                                        </tbody>
-                                        <!--end::Table body-->
-                                    </table>
+                                    <!--end::Body-->
                                 </div>
-                                <!--end::Table-->
+                                <!--end::Charts Widget 1-->
                             </div>
-                            <!--end::Tap pane-->
-                            <!--begin::Tap pane-->
-                            <div class="tab-pane fade" id="kt_stats_widget_2_tab_3">
-                                <!--begin::Table container-->
-                                <div class="table-responsive">
-                                    <!--begin::Table-->
-                                    <table class="table table-row-dashed align-middle gs-0 gy-4 my-0">
-                                        <!--begin::Table head-->
-                                        <thead>
-                                            <tr class="fs-7 fw-bolder text-gray-500 border-bottom-0">
-                                                <th class="ps-0 w-50px">Item</th>
-                                                <th class="min-w-140px"></th>
-                                                <th class="text-end min-w-140px">SL</th>
-                                                <th class="pe-0 text-end min-w-120px">Đơn giá</th>
-                                                <th class="pe-0 text-end min-w-120px">Thành tiền</th>
-                                            </tr>
-                                        </thead>
-                                        <!--end::Table head-->
-                                        <!--begin::Table body-->
-                                        <tbody>
-                                            @foreach (var accessory in ListOrderDetail)
-                                            {
-                                                if (accessory.Product.type == 2)
-                                                {
-                                                    <tr>
-                                                        <td>
-                                                            <img src="@accessory.Product.image" class="w-50px ms-n1" alt="" />
-                                                        </td>
-                                                        <td class="ps-0">
-                                                            <a target="_blank" href="~/@SlugGenerator.SlugGenerator.GenerateSlug(accessory.Product.product_name)-@accessory.product_id" class="text-gray-800 fw-bolder text-hover-primary mb-1 fs-6 text-start pe-0">@accessory.Product.product_name</a>
-                                                            <span class="text-gray-400 fw-bold fs-7 d-block text-start ps-0">Item: #@accessory.product_id</span>
-                                                        </td>
-                                                        <td>
-                                                            <span class="text-gray-800 fw-bolder d-block fs-6 ps-0 text-end">x<span>@accessory.quantity</span></span>
-                                                        </td>
-                                                        <td class="text-end pe-0">
-                                                            <span class="text-gray-800 fw-bolder d-block fs-6">@accessory.price.ToString("#,0₫", culture.NumberFormat)</span>
-                                                        </td>
-                                                        <td class="text-end pe-0">
-                                                            <span class="text-gray-800 fw-bolder d-block fs-6">@((accessory.price* accessory.quantity).ToString("#,0₫", culture.NumberFormat))</span>
-                                                        </td>
-                                                    </tr>
-                                                }
-                                            }
-                                        </tbody>
-                                        <!--end::Table body-->
-                                    </table>
-                                </div>
-                                <!--end::Table-->
-                            </div>
-                            <!--end::Tap pane-->
+                            <!--end::Col-->
                         </div>
-                        <!--end::Tab Content-->
                     </div>
-                    <!--end: Card Body-->
+                    <!--end::Card Body-->
                 </div>
                 <!--end::Tables widget 2-->
             </div>
+
             <!--end::Col-->
             <div class="col-md-6 col-lg-6 col-xl-6 col-xxl-3 mb-md-5 mb-xl-10">
                 <!--begin::Card widget 6-->
@@ -621,6 +495,7 @@
             </div>
             <!--end::Col-->
         </div>
+        
         <!--end::Row-->
     </div>
     <!--end::Container-->
@@ -630,23 +505,20 @@
     <script src="~/Scripts/AdminJS/vis-timeline.bundle.js"></script>
     <script src="~/Scripts/AdminJS/widgets.bundle.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
     <script>
-    // Lấy dữ liệu laptop stats từ ViewBag và phân tích thành đối tượng JavaScript
     var laptopStats = @Html.Raw(ViewBag.LaptopStatsJson);
-        console.log(laptopStats);
         if (laptopStats && laptopStats.length > 0) {
             var xValues = laptopStats.map(function (stat) { return stat.BrandName; });
             var yValues = laptopStats.map(function (stat) { return stat.TotalSold; });
-            function getRandomColor() {
-                var letters = '0123456789ABCDEF';
-                var color = '#'; for (var i = 0; i < 6; i++) {
-                    color += letters[Math.floor(Math.random() * 16)];
-                } return color;
-            } // Tạo mảng màu ngẫu nhiên
-            var barColors = xValues.map(function () { return getRandomColor(); });
-            console.log(laptopStats);
+            var barColors = [
+                "#FF5733", "#33FF57", "#3357FF", "#F1C40F", "#9B59B6", "#E67E22", "#1ABC9C", "#D35400", "#2980B9", "#2ECC71",
+                "#8E44AD", "#3498DB", "#C0392B", "#27AE60", "#F39C12", "#7F8C8D", "#BDC3C7", "#E74C3C", "#16A085", "#34495E",
+                "#95A5A6", "#DFFF00", "#FFBF00", "#40E0D0", "#FF7F50", "#6495ED", "#DC143C", "#00FFFF", "#FF00FF", "#FFD700"
+
+            ];
             new Chart("laptopChart", {
-                type: "pie",
+                type: "doughnut",
                 data: {
                     labels: xValues,
                     datasets: [{
@@ -675,27 +547,30 @@
                     }
                 }
             });
-        } else { console.error("No data available for laptopStats"); }
-         var accessorypStats = @Html.Raw(ViewBag.AccessoryStatsJson);
-        console.log(accessorypStats);
+        } else {
+            console.error("No data available for laptopStats");
+        }
+
+
+
+        var accessorypStats = @Html.Raw(ViewBag.AccessoryStatsJson);
+
         if (laptopStats && laptopStats.length > 0) {
             var xValues = accessorypStats.map(function (stat) { return stat.BrandName; });
             var yValues = accessorypStats.map(function (stat) { return stat.TotalSold; });
-            function getRandomColor() {
-                var letters = '0123456789ABCDEF';
-                var color = '#'; for (var i = 0; i < 6; i++) {
-                    color += letters[Math.floor(Math.random() * 16)];
-                } return color;
-            } // Tạo mảng màu ngẫu nhiên
-            var barColors = xValues.map(function () { return getRandomColor(); });
-            console.log(laptopStats);
+            var barColors = [
+                "#FF5733", "#33FF57", "#3357FF", "#F1C40F", "#9B59B6", "#E67E22", "#1ABC9C", "#D35400", "#2980B9", "#2ECC71",
+                "#8E44AD", "#3498DB", "#C0392B", "#27AE60", "#F39C12", "#7F8C8D", "#BDC3C7", "#E74C3C", "#16A085", "#34495E",
+                "#95A5A6", "#DFFF00", "#FFBF00", "#40E0D0", "#FF7F50", "#6495ED", "#DC143C", "#00FFFF", "#FF00FF", "#FFD700"
+
+            ];
             new Chart("accessorypStats", {
-                type: "pie",
+                type: "doughnut",
                 data: {
                     labels: xValues,
                     datasets: [{
                         backgroundColor: barColors,
-                        data: yValues
+                        data: yValues,
                     }]
                 },
                 options: {
@@ -719,6 +594,58 @@
                     }
                 }
             });
-        } else { console.error("No data available for laptopStats"); }
+        } else { console.error("No data available") }
+
+
+
+        var ctx = document.getElementById('ProductsLine').getContext('2d');
+        var barColors = [
+            "#FF5733", "#33FF57", "#3357FF", "#F1C40F", "#9B59B6", "#E67E22", "#1ABC9C", "#D35400", "#2980B9", "#2ECC71",
+            "#8E44AD", "#3498DB", "#C0392B", "#27AE60", "#F39C12", "#7F8C8D", "#BDC3C7", "#E74C3C", "#16A085", "#34495E",
+            "#95A5A6", "#DFFF00", "#FFBF00", "#40E0D0", "#FF7F50", "#6495ED", "#DC143C", "#00FFFF", "#FF00FF", "#FFD700"
+        ];
+        var chartData = JSON.parse(document.getElementById('chartData').value);
+            chartData.datasets[0].data = chartData.datasets[0].data.map(Number);
+        // Add colors to the dataset
+        if (chartData.datasets && chartData.datasets.length > 0) {
+            chartData.datasets[0].backgroundColor = barColors;
+            chartData.datasets[0].borderColor = barColors;
+            chartData.datasets[0].borderWidth = 1;
+        }
+
+        function formatVND(value) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+        }
+
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: chartData,
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function (value) {
+                                return formatVND(value); 
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return formatVND(context.raw);
+                            }
+                        }
+                    }
+                }
+            }
+        });
     </script>
+
 }

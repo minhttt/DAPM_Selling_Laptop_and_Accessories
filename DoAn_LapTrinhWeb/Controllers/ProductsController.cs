@@ -119,7 +119,7 @@ namespace DoAn_LapTrinhWeb.Controllers
         //Tìm kiếm sản phẩm
         public ActionResult SearchResult(int? page, string sortOrder, string s,string brand, int? genre)
         {
-            ViewBag.SortBy = "search?s=" + s + "&";
+            ViewBag.SortBy = "search?s=" + HttpUtility.UrlEncode(s) + "&";
             ViewBag.Type = "Kết quả tìm kiếm - " + s;
             ViewBag.CurrentSort = sortOrder;
             ViewBag.ResetSort = String.IsNullOrEmpty(sortOrder) ? "" : "";
@@ -158,7 +158,7 @@ namespace DoAn_LapTrinhWeb.Controllers
                     break;
             }
             ViewBag.Countproduct = db.Products.Where(m => m.status == "1" && m.product_name.Contains(s)).Count();
-            return View("Product", GetProduct(m => m.status == "1" && (m.product_name.Contains(s) || m.product_id.ToString().Contains(s)), page, sortOrder,brand,genre));
+            return View("Product", GetProduct(m => m.status == "1" && (m.product_name.Contains(s) || m.Genre.genre_name.Contains(s) || m.product_id.ToString().Contains(s)), page, sortOrder,brand,genre));
         }
 
 
@@ -253,13 +253,10 @@ namespace DoAn_LapTrinhWeb.Controllers
             int pageNumber = (page ?? 1);
             var expr = LinqKit.PredicateBuilder.New<Product>();
             expr = expr.And(p => p.status == "1");
-            // Add the condition for genre if it is provided
             if (genre.HasValue)
             {
                 expr = expr.And(p => p.genre_id == genre);
             }
-
-            // Thêm điều kiện cho brand
             if (!string.IsNullOrEmpty(brand))
             {
                 expr = expr.And(p => p.product_name.Contains(brand));

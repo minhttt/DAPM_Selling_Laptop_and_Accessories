@@ -37,7 +37,7 @@
                     @using (Html.BeginForm("SavePhoneNumber", "Account", FormMethod.Post))
                     {
                         @Html.AntiForgeryToken()
-                        <label class="mb-1">Email <span class="text-danger">*</span></label>
+                        <label class="mb-1">Số điện thoại <span class="text-danger">*</span></label>
                         <div class="default-form-box">
                             @Html.TextBoxFor(m => m.Phone, new { @class = "form-control", placeholder = "Nhập số điện thoại" })
                             @Html.ValidationMessageFor(m => m.Phone, "", new { @class = "text-danger" })
