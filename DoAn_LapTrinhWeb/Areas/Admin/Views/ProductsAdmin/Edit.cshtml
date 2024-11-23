@@ -168,7 +168,9 @@
                                         <label for="disscount_id" class="col-form-label fw-bold fs-6">Chương trình giảm giá</label>
                                     </div>
                                     <div class="col-lg-8 fv-row">
-                                        <div class="form-control form-control-lg form-control-solid disabled">@Model.Discount.discount_name</div>
+                                        @Html.DropDownListFor(model => model.disscount_id, (SelectList)ViewBag.ListDiscount, "-- Chọn chương trình giảm giá --", new { @class = "form-select form-select-solid form-select-lg fw-bold" })
+                                        @Html.ValidationMessageFor(model => model.disscount_id, "", new { @class = "text-danger" })
+        
                                     </div>
                                 </div>
                                 <!--end::Input group-->
