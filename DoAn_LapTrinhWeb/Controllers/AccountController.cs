@@ -41,7 +41,7 @@ namespace DoAn_LapTrinhWeb.Controllers
             {
                 return RedirectToAction("Index", "Home");
             }
-            var clientId = "740132614033-5su84fmh3pqgna4umh0gb01lt1rl889q.apps.googleusercontent.com";
+            var clientId = GGkey.clientId;
             var url = "https://localhost:44336/Account/GoogleSignInCallback";
             var response = GoogleAuth.GetAuthUrl(clientId, url);
             ViewBag.response = response;
@@ -557,8 +557,8 @@ namespace DoAn_LapTrinhWeb.Controllers
         }
         public async Task<ActionResult> GoogleSignInCallback(string code)
         {
-                var clientId = "740132614033-5su84fmh3pqgna4umh0gb01lt1rl889q.apps.googleusercontent.com"; // Client ID 
-                var clientsecret = "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"; // Client secret 
+                var clientId = GGkey.clientId; // Client ID 
+                var clientsecret = GGkey.clientsecret; // Client secret 
                 var url = "https://localhost:44336/Account/GoogleSignInCallback"; // URL callback 
                 var token = await GoogleAuth.GetAuthAccessToken(code, clientId, clientsecret, url);
                 var uProfile = await GoogleAuth.GetProfileResponseAsync(token.AccessToken.ToString());
